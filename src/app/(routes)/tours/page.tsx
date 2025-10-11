@@ -1,7 +1,7 @@
 // app/tours/page.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -129,12 +129,15 @@ function TourCard({ tour }: { tour: Tour }) {
   );
 }
 
-export default function ToursPage() {
-  const data = tours as Tour[]; // ← sumber data lokal (tanpa API)
+/**
+ * Komponen dalam Suspense -> aman pakai useSearchParams
+ */
+function ToursInner() {
+  const data = tours as Tour[];
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // ===== URL state (ambil default dari query, tetap boleh biar bisa share link) =====
+  // ===== URL state (default dari query, supaya bisa share link) =====
   const [q, setQ] = useState<string>(searchParams.get("q") || "");
   const [country, setCountry] = useState<string>(
     searchParams.get("country") || "All"
@@ -176,7 +179,7 @@ export default function ToursPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ===== Facets dari data lokal =====
+  // ===== Facets =====
   const allCountries = useMemo(
     () => ["All", ...Array.from(new Set(data.map((t) => t.country))).sort()],
     [data]
@@ -187,7 +190,7 @@ export default function ToursPage() {
     return Array.from(s).sort();
   }, [data]);
 
-  // ===== Sinkron ke URL (tanpa fetch) =====
+  // ===== Sinkron ke URL =====
   function pushQuery(updatePage = true) {
     const sp = new URLSearchParams();
     if (q) sp.set("q", q);
@@ -203,7 +206,7 @@ export default function ToursPage() {
     router.replace(`/tours?${sp.toString()}`);
   }
 
-  // setiap filter berubah (kecuali page/pageSize), update URL & reset page
+  // filter berubah → update URL & reset page
   useEffect(() => {
     pushQuery(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -224,7 +227,7 @@ export default function ToursPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  // ===== Filtering + Sorting di client =====
+  // ===== Filtering + Sorting (client) =====
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     const list = data.filter((t) => {
@@ -623,5 +626,13 @@ export default function ToursPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-6 text-neutral-600">Loading…</div>}>
+      <ToursInner />
+    </Suspense>
   );
 }
