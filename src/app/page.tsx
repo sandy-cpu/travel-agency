@@ -52,6 +52,14 @@ function formatMoney(n: number, locale = "en-US", currency = "USD") {
   }
 }
 
+const USD_TO_IDR = 16000;
+const formatIDRkFromUSD = (usd: number) => {
+  const idr = Math.round(usd * USD_TO_IDR);
+  const k = Math.round(idr / 1000);
+  const s = k.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `Rp ${s}K`;
+};
+
 // ===== stars a11y =====
 function Stars({ value }: { value: number }) {
   const safe = Math.max(0, Math.min(5, Number.isFinite(value) ? value : 0));
@@ -179,7 +187,7 @@ function TourCardEnhanced({ tour }: { tour: Tour }) {
         <div className="mt-4 mb-1 flex items-center justify-between">
           <div className="flex items-baseline gap-2">
             <span className="text-xl font-bold text-emerald-600">
-              {formatMoney(tour.priceFrom)}
+              {formatIDRkFromUSD(tour.priceFrom)}
             </span>
             <span className="text-xs text-neutral-500">/ person</span>
           </div>
