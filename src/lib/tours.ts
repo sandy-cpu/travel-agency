@@ -1,11 +1,5 @@
 // lib/tours.ts
-
-type ItineraryDay = {
-  day: number;
-  title: string;
-  subtitle?: string;
-  details: string[];
-};
+import { ItineraryDay } from "@/types/itinerary";
 
 type Tour = {
   id: string | number;
@@ -40,6 +34,8 @@ function buildItinerary(
           "Airport pickup / self check-in.",
           "Free time to rest or explore nearby area.",
         ],
+        image:
+          "https://images.unsplash.com/photo-1593462580207-2c4d8840b558?w=300&h=200&q=85&fit=crop&auto=format&auto=compress", // Modern Terminal
       },
     ];
   }
@@ -55,6 +51,8 @@ function buildItinerary(
       "Hotel check-in and short orientation walk nearby.",
       "Evening at leisure / welcome dinner suggestions.",
     ],
+    image:
+      "https://images.unsplash.com/photo-1593462580207-2c4d8840b558?w=300&h=200&q=85&fit=crop&auto=format&auto=compress", // Modern Terminal
   });
 
   // Middle days
@@ -65,6 +63,8 @@ function buildItinerary(
       day: i + 2,
       title: h.title,
       details: h.details,
+      image:
+        "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=300&h=200&q=85&fit=crop&auto=format&auto=compress", // Cultural Landmark
     });
   }
 
@@ -78,6 +78,8 @@ function buildItinerary(
       "Hotel check-out and transfer to airport.",
       "End of service.",
     ],
+    image:
+      "https://images.unsplash.com/photo-1593462580207-2c4d8840b558?w=600&q=80", // Modern Airport Terminal
   });
 
   return days;
@@ -110,6 +112,8 @@ const tours: Tour[] = [
           "Transfer to your hotel in central Tokyo.",
           "Evening at leisure to explore nearby areas like Shinjuku or Shibuya.",
         ],
+        image:
+          "https://images.unsplash.com/photo-1553713822-be7e53da6e8a?w=600&h=400&q=90&fit=crop", // Narita Express
       },
       {
         day: 2,
@@ -120,6 +124,8 @@ const tours: Tour[] = [
           "See the Meiji Shrine and stroll through Yoyogi Park.",
           "Experience the bustling Shibuya Crossing and Hachiko Statue.",
         ],
+        image:
+          "https://images.unsplash.com/photo-1624253321171-1be53e12f5f4?w=600&h=400&q=90&fit=crop", // Beautiful Sensoji Temple
       },
       {
         day: 3,
@@ -129,6 +135,8 @@ const tours: Tour[] = [
           "Optional: teamLab Planets / Digital art museum.",
           "Food stop: ramen or sushi train experience.",
         ],
+        image:
+          "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&h=400&q=90&fit=crop", // Tokyo Street Food
       },
       {
         day: 4,
@@ -138,6 +146,8 @@ const tours: Tour[] = [
           "Views of Mt. Fuji; Chureito Pagoda photo spots.",
           "Lake Kawaguchi promenade and local snacks.",
         ],
+        image:
+          "https://images.unsplash.com/photo-1570459027562-4a916cc6113f?w=600&h=400&q=90&fit=crop", // Chureito Pagoda & Mt. Fuji
       },
       {
         day: 5,
@@ -147,6 +157,8 @@ const tours: Tour[] = [
           "Optional: Odaiba bay area & night views.",
           "Evening food crawl or izakaya experience.",
         ],
+        image:
+          "https://images.unsplash.com/photo-1554797589-7241bb691973?w=600&h=400&q=90&fit=crop", // Akihabara Night
       },
       {
         day: 6,
@@ -156,6 +168,8 @@ const tours: Tour[] = [
           "Free time depending on flight schedule.",
           "Hotel check-out and transfer to airport.",
         ],
+        image:
+          "https://images.unsplash.com/photo-1524326075328-c768c3468b6a?w=600&h=400&q=90&fit=crop", // Airport Terminal
       },
     ],
   },
@@ -213,7 +227,8 @@ const tours: Tour[] = [
     slug: "alps-hiking-8d",
     title: "Alps Hiking Adventure – 8D7N",
     country: "Switzerland",
-    image: "https://images.pexels.com/photos/196464/pexels-photo-196464.jpeg",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQzZ9P9Mx1zp8PU_kXvikJ-qn-m7GfdNV8AA&s",
     durationDays: 8,
     priceFrom: 1290,
     rating: 4.9,
@@ -981,7 +996,8 @@ const tours: Tour[] = [
     slug: "kenya-safari-7d",
     title: "Kenya Great Migration Safari – 7D6N",
     country: "Kenya",
-    image: "https://images.pexels.com/photos/35600/pexels-photo.jpg",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc2Sbw9UOdozLLelLU1PLrOZ6xp8escN8mYA&s",
     durationDays: 7,
     priceFrom: 2580,
     rating: 4.9,

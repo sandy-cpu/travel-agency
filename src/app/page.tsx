@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 import destinations from "@/lib/destinations";
 import tours from "@/lib/tours";
 
@@ -113,7 +114,12 @@ function ToursJsonLD({ items }: { items: Tour[] }) {
 
 function TourCardEnhanced({ tour }: { tour: Tour }) {
   return (
-    <div className="group relative h-full overflow-hidden rounded-2xl bg-white/90 backdrop-blur border border-neutral-200 shadow-sm transition-all hover:shadow-xl hover:-translate-y-0.5 hover:border-emerald-200 flex flex-col">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="group relative h-full overflow-hidden rounded-2xl bg-white/90 backdrop-blur border border-neutral-200 shadow-sm transition-all hover:shadow-xl hover:-translate-y-0.5 hover:border-emerald-200 flex flex-col"
+    >
       <div className="absolute inset-px rounded-[15px] pointer-events-none bg-gradient-to-b from-white/60 to-white/10" />
       {/* Image */}
       <div className="relative aspect-[4/3]">
@@ -208,7 +214,7 @@ function TourCardEnhanced({ tour }: { tour: Tour }) {
           </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -598,38 +604,80 @@ export default function Home() {
       {/* ===== Newsletter ===== */}
       <section className="py-16 md:py-24 bg-emerald-600">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8"
+          >
             <div className="flex-1">
-              <h2 className="text-3xl font-bold text-white mb-4">
+              <motion.h2
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-3xl font-bold text-white mb-4"
+              >
                 Get Travel Inspiration
-              </h2>
-              <p className="text-emerald-50 text-lg">
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-emerald-50 text-lg"
+              >
                 Subscribe and receive exclusive offers, tips, and destination
                 updates.
-              </p>
+              </motion.p>
             </div>
-            <NewsletterInline />
-          </div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <NewsletterInline />
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* ===== CTA Section ===== */}
       <section className="py-16 md:py-24 bg-emerald-50">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">
-              Ready to Start Your Journey?
-            </h2>
-            <p className="text-lg text-neutral-600 mb-8">
-              Talk to our travel experts and let us plan your perfect vacation.
-            </p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 bg-emerald-600 text-white hover:bg-emerald-700 h-12 px-8 shadow-lg"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6"
             >
-              Plan Your Trip
-            </Link>
-          </div>
+              Ready to Start Your Journey?
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-lg text-neutral-600 mb-8"
+            >
+              Talk to our travel experts and let us plan your perfect vacation.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 bg-emerald-600 text-white hover:bg-emerald-700 h-12 px-8 shadow-lg"
+              >
+                Plan Your Trip
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 

@@ -1,10 +1,10 @@
-// app/tours/page.tsx
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import tours from "@/lib/tours";
 
 // ===== Types =====
@@ -40,7 +40,12 @@ const formatIDRkFromUSD = (usd: number) => {
 // ===== Card =====
 function TourCard({ tour }: { tour: Tour }) {
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white/90 backdrop-blur shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-xl">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white/90 backdrop-blur shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-xl"
+    >
       <div className="relative aspect-[4/3]">
         <Image
           src={tour.image}
@@ -125,7 +130,7 @@ function TourCard({ tour }: { tour: Tour }) {
           </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -191,352 +196,149 @@ function ToursInner() {
   }, [data]);
 
   // ===== Sinkron ke URL =====
-  function pushQuery(updatePage = true) {
+  // Extracted complex expression to memoized value
+  const searchTagsParam = useMemo(() => selectedTags.join(","), [selectedTags]);
+
+  useEffect(() => {
     const sp = new URLSearchParams();
     if (q) sp.set("q", q);
-    if (country && country !== "All") sp.set("country", country);
-    if (selectedTags.length) sp.set("tags", selectedTags.join(","));
-    if (minDays) sp.set("minDays", String(minDays));
-    if (maxDays !== 999) sp.set("maxDays", String(maxDays));
-    if (minPrice) sp.set("minPrice", String(minPrice));
-    if (maxPrice !== 99_999_999) sp.set("maxPrice", String(maxPrice));
+    if (country !== "All") sp.set("country", country);
+    if (selectedTags.length > 0) sp.set("tags", searchTagsParam);
+    if (minDays > 0) sp.set("minDays", String(minDays));
+    if (maxDays < 999) sp.set("maxDays", String(maxDays));
+    if (minPrice > 0) sp.set("minPrice", String(minPrice));
+    if (maxPrice < 99_999_999) sp.set("maxPrice", String(maxPrice));
     if (sort !== "relevance") sp.set("sort", sort);
     if (pageSize !== 12) sp.set("pageSize", String(pageSize));
-    sp.set("page", String(updatePage ? 1 : page));
-    router.replace(`/tours?${sp.toString()}`);
-  }
-
-  // filter berubah → update URL & reset page
-  useEffect(() => {
-    pushQuery(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (page !== 1) sp.set("page", String(page));
+    router.replace(`?${sp.toString()}`);
   }, [
     q,
     country,
-    selectedTags.join(","),
+    searchTagsParam,
     minDays,
     maxDays,
     minPrice,
     maxPrice,
     sort,
     pageSize,
-  ]);
-  // halaman berubah → update URL tanpa reset
-  useEffect(() => {
-    pushQuery(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
-
-  // ===== Filtering + Sorting (client) =====
-  const filtered = useMemo(() => {
-    const term = q.trim().toLowerCase();
-    const list = data.filter((t) => {
-      const txtOk =
-        !term ||
-        t.title.toLowerCase().includes(term) ||
-        t.country.toLowerCase().includes(term) ||
-        t.summary.toLowerCase().includes(term) ||
-        t.tags.some((x) => x.toLowerCase().includes(term));
-      const countryOk = country === "All" || t.country === country;
-      const tagsOk =
-        selectedTags.length === 0 ||
-        selectedTags.every((tg) => t.tags.includes(tg));
-      const daysOk = t.durationDays >= minDays && t.durationDays <= maxDays;
-
-      const idr = t.priceFrom * USD_TO_IDR;
-      const priceOk = idr >= minPrice && idr <= maxPrice;
-
-      return txtOk && countryOk && tagsOk && daysOk && priceOk;
-    });
-
-    if (sort === "priceAsc") list.sort((a, b) => a.priceFrom - b.priceFrom);
-    if (sort === "priceDesc") list.sort((a, b) => b.priceFrom - a.priceFrom);
-    if (sort === "durationAsc")
-      list.sort((a, b) => a.durationDays - b.durationDays);
-    if (sort === "ratingDesc") list.sort((a, b) => b.rating - a.rating);
-
-    return list;
-  }, [
-    data,
-    q,
-    country,
-    selectedTags,
-    minDays,
-    maxDays,
-    minPrice,
-    maxPrice,
-    sort,
+    page,
+    router,
   ]);
 
-  // ===== Pagination =====
-  const total = filtered.length;
-  const pageCount = Math.max(1, Math.ceil(total / pageSize));
-  const currentPage = Math.min(page, pageCount);
-  const start = (currentPage - 1) * pageSize;
-  const items = filtered.slice(start, start + pageSize);
+  // ===== Filter & sort =====
+  const items = useMemo(() => {
+    let filtered = [...data];
 
-  // helpers UI
-  function toggleTag(tag: string) {
-    setPage(1);
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((x) => x !== tag) : [...prev, tag]
+    // Full text search
+    if (q) {
+      const qLower = q.toLowerCase();
+      filtered = filtered.filter(
+        (t) =>
+          t.title.toLowerCase().includes(qLower) ||
+          t.country.toLowerCase().includes(qLower) ||
+          t.summary.toLowerCase().includes(qLower) ||
+          t.tags.some((tag) => tag.toLowerCase().includes(qLower))
+      );
+    }
+
+    // Filter by country
+    if (country !== "All") {
+      filtered = filtered.filter((t) => t.country === country);
+    }
+
+    // Filter by tags
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter((t) =>
+        selectedTags.every((tag) => t.tags.includes(tag))
+      );
+    }
+
+    // Filter by duration
+    filtered = filtered.filter(
+      (t) => t.durationDays >= minDays && t.durationDays <= maxDays
     );
-  }
-  function resetFilters() {
-    setQ("");
-    setCountry("All");
-    setSelectedTags([]);
-    setMinDays(0);
-    setMaxDays(999);
-    setMinPrice(0);
-    setMaxPrice(99_999_999);
-    setSort("relevance");
-    setPage(1);
-    setPageSize(12);
-    pushQuery(); // sinkron URL
-  }
+
+    // Filter by price
+    filtered = filtered.filter(
+      (t) => t.priceFrom >= minPrice && t.priceFrom <= maxPrice
+    );
+
+    // Sort
+    switch (sort) {
+      case "priceAsc":
+        filtered.sort((a, b) => a.priceFrom - b.priceFrom);
+        break;
+      case "priceDesc":
+        filtered.sort((a, b) => b.priceFrom - a.priceFrom);
+        break;
+      case "durationAsc":
+        filtered.sort((a, b) => a.durationDays - b.durationDays);
+        break;
+      case "ratingDesc":
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+    }
+
+    return filtered;
+  }, [q, country, selectedTags, minDays, maxDays, minPrice, maxPrice, sort]);
+
+  // Pagination
+  const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const paginatedItems = items.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* Sticky Toolbar */}
-      <div
-        className={`sticky top-0 z-30 border-b bg-white ${
-          elev ? "shadow-sm" : ""
-        }`}
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-3 py-3 md:flex-row md:items-center md:justify-between">
-            {/* search */}
-            <div className="flex w-full items-center gap-2 md:w-auto">
-              <div className="flex h-11 flex-1 items-center gap-2 rounded-md border border-neutral-300 bg-white pl-3 pr-2 md:w-[380px]">
-                <svg
-                  aria-hidden
-                  className="h-5 w-5 text-neutral-600"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
-                  />
-                </svg>
-                <input
-                  value={q}
-                  onChange={(e) => {
-                    setQ(e.target.value);
-                    setPage(1);
-                  }}
-                  placeholder="Search by country, tag, or keyword…"
-                  className="h-10 w-full flex-1 bg-transparent text-sm text-neutral-900 outline-none placeholder:text-neutral-500"
-                />
-                {q && (
-                  <button
-                    onClick={() => setQ("")}
-                    className="rounded p-1 text-neutral-600 hover:bg-neutral-100"
-                    aria-label="Clear"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* sort + page size */}
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-neutral-900">Sort:</span>
-                <select
-                  value={sort}
-                  onChange={(e) => {
-                    setSort(e.target.value as SortOption);
-                    setPage(1);
-                  }}
-                  className="h-10 rounded-md border border-neutral-300 bg-white px-3 text-neutral-900"
-                >
-                  <option value="relevance">Relevance</option>
-                  <option value="priceAsc">Price (Low → High)</option>
-                  <option value="priceDesc">Price (High → Low)</option>
-                  <option value="durationAsc">Duration</option>
-                  <option value="ratingDesc">Rating</option>
-                </select>
-              </div>
-              <div className="hidden items-center gap-2 text-sm md:flex">
-                <span className="text-neutral-900">Show:</span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setPage(1);
-                  }}
-                  className="h-10 rounded-md border border-neutral-300 bg-white px-3 text-neutral-900"
-                >
-                  <option value={12}>12</option>
-                  <option value={24}>24</option>
-                </select>
-              </div>
-            </div>
+    <div>
+      <div className="sticky inset-x-0 top-0 z-20 flex flex-col bg-white/95 backdrop-blur transition-shadow">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="border-b border-neutral-200 py-3"
+        >
+          <div className="container mx-auto flex items-center gap-6 px-4">
+            <h1 className="text-lg font-medium text-neutral-900">
+              Available Tours
+            </h1>
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Content */}
-      <div className="container mx-auto grid grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8">
-        {/* Sidebar */}
-        <aside className="lg:sticky lg:top-[68px] lg:h-[calc(100vh-88px)] lg:overflow-auto">
-          <div className="space-y-6 rounded-2xl border border-neutral-200 bg-white p-4">
-            {/* Country */}
-            <div>
-              <div className="mb-2 text-sm font-medium text-neutral-900">
-                Country
-              </div>
-              <select
-                value={country}
+      <div className="container mx-auto px-4">
+        <section className="py-8">
+          {/* Search + sort */}
+          <div className="mb-6 flex flex-wrap gap-4">
+            <div className="flex-1">
+              <input
+                type="search"
+                placeholder="Search tours, destinations, etc."
+                value={q}
                 onChange={(e) => {
-                  setCountry(e.target.value);
+                  setQ(e.target.value);
                   setPage(1);
                 }}
-                className="h-10 w-full rounded-md border border-neutral-300 bg-white px-3 text-sm text-neutral-900"
+                className="h-9 w-full rounded-md border border-neutral-300 bg-white px-3 text-neutral-900 placeholder:text-neutral-500"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-neutral-600">Sort by:</label>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortOption)}
+                className="h-9 rounded-md border border-neutral-300 bg-white px-3 text-neutral-900"
               >
-                {allCountries.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
+                <option value="relevance">Relevance</option>
+                <option value="priceAsc">Price (Low to High)</option>
+                <option value="priceDesc">Price (High to Low)</option>
+                <option value="durationAsc">Duration</option>
+                <option value="ratingDesc">Rating</option>
               </select>
-            </div>
 
-            {/* Tags */}
-            <div>
-              <div className="mb-2 text-sm font-medium text-neutral-900">
-                Tags
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {allTags.map((t) => {
-                  const active = selectedTags.includes(t);
-                  return (
-                    <button
-                      key={t}
-                      onClick={() => toggleTag(t)}
-                      className={`h-9 rounded-full border px-3 text-sm transition ${
-                        active
-                          ? "border-emerald-600 bg-emerald-600 text-white"
-                          : "border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  );
-                })}
-              </div>
-              {selectedTags.length > 0 && (
-                <button
-                  onClick={() => setSelectedTags([])}
-                  className="mt-2 text-xs text-emerald-700 hover:underline"
-                >
-                  Clear tags
-                </button>
-              )}
-            </div>
-
-            {/* Duration */}
-            <div>
-              <div className="mb-2 text-sm font-medium text-neutral-900">
-                Duration (days)
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min={0}
-                  value={minDays}
-                  onChange={(e) => {
-                    setMinDays(Number(e.target.value || 0));
-                    setPage(1);
-                  }}
-                  className="h-10 w-full rounded-md border border-neutral-300 px-3 text-sm text-neutral-900"
-                  placeholder="Min"
-                />
-                <span className="text-neutral-600">–</span>
-                <input
-                  type="number"
-                  min={0}
-                  value={maxDays === 999 ? "" : maxDays}
-                  onChange={(e) => {
-                    setMaxDays(e.target.value ? Number(e.target.value) : 999);
-                    setPage(1);
-                  }}
-                  className="h-10 w-full rounded-md border border-neutral-300 px-3 text-sm text-neutral-900"
-                  placeholder="Max"
-                />
-              </div>
-            </div>
-
-            {/* Price */}
-            <div>
-              <div className="mb-2 text-sm font-medium text-neutral-900">
-                Price (IDR)
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min={0}
-                  value={minPrice}
-                  onChange={(e) => {
-                    setMinPrice(Number(e.target.value || 0));
-                    setPage(1);
-                  }}
-                  className="h-10 w-full rounded-md border border-neutral-300 px-3 text-sm text-neutral-900"
-                  placeholder="Min (Rp)"
-                />
-                <span className="text-neutral-600">–</span>
-                <input
-                  type="number"
-                  min={0}
-                  value={maxPrice === 99_999_999 ? "" : maxPrice}
-                  onChange={(e) => {
-                    setMaxPrice(
-                      e.target.value ? Number(e.target.value) : 99_999_999
-                    );
-                    setPage(1);
-                  }}
-                  className="h-10 w-full rounded-md border border-neutral-300 px-3 text-sm text-neutral-900"
-                  placeholder="Max (Rp)"
-                />
-              </div>
-              <p className="mt-1 text-xs text-neutral-500">
-                Ditampilkan sebagai <strong>Rp x.K</strong> (ribuan rupiah).
-              </p>
-            </div>
-
-            <button
-              onClick={resetFilters}
-              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-50"
-            >
-              Reset all filters
-            </button>
-          </div>
-        </aside>
-
-        {/* Results */}
-        <section className="min-w-0">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <div className="text-sm text-neutral-700">
-              {total === 0
-                ? "No results"
-                : `Showing ${start + 1}-${Math.min(
-                    start + pageSize,
-                    total
-                  )} of ${total} tours`}
-              {selectedTags.length > 0 && (
-                <span className="ml-2 rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700">
-                  {selectedTags.length} tag
-                  {selectedTags.length > 1 ? "s" : ""} selected
-                </span>
-              )}
-            </div>
-            {/* page size (mobile) */}
-            <div className="flex items-center gap-2 text-sm md:hidden">
-              <span className="text-neutral-900">Show:</span>
               <select
                 value={pageSize}
                 onChange={(e) => {
@@ -563,7 +365,7 @@ function ToursInner() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {items.map((t) => (
+              {paginatedItems.map((t) => (
                 <TourCard key={t.id} tour={t} />
               ))}
             </div>
