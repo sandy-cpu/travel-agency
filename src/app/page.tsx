@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import destinations from "@/lib/destinations";
 import tours from "@/lib/tours";
+import Head from "next/head";
 
 // ===== lazy carousel (sudah ada di project kamu) =====
 const FeaturedDestinationsCarousel = dynamic(
@@ -219,6 +220,21 @@ function TourCardEnhanced({ tour }: { tour: Tour }) {
 }
 
 export default function Home() {
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Topremit",
+    operatingSystem: "ANDROID, iOS",
+    applicationCategory: "FinanceApplication",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      ratingCount: "178402",
+      worstRating: "1",
+      bestRating: "5",
+    },
+  };
+
   // Kalau library kamu belum punya type export, kita cast aman ke tipe lokal:
   const featuredDestinations = destinations as Destination[];
   const toursData = tours as Tour[];
@@ -273,430 +289,441 @@ export default function Home() {
   );
 
   return (
-    <main>
-      {/* ===== HERO dengan lapisan gradient + grain ===== */}
-      <section className="relative min-h-[720px] flex items-center bg-neutral-950">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg"
-            alt="Hero background - Beautiful mountain landscape with tourists"
-            fill
-            sizes="100vw"
-            priority
-            className="object-cover opacity-50"
-          />
-          {/* radial glow */}
-          <div className="absolute inset-0 [background:radial-gradient(60%_40%_at_20%_20%,rgba(16,185,129,0.28),transparent_60%)]" />
-          {/* grain (CSS only) */}
-          <div
-            className="absolute inset-0 opacity-[0.09] mix-blend-soft-light"
-            style={{
-              backgroundImage:
-                "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%2280%22 height=%2280%22 filter=%22url(%23n)%22 opacity=%220.25%22/></svg>')",
-            }}
-          />
-        </div>
-        <div className="container mx-auto px-4 relative py-24">
-          <div className="max-w-2xl">
-            <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight tracking-tight">
-              Discover Your{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 to-emerald-500">
-                Next Adventure
-              </span>
-            </h1>
-            <p className="mt-4 text-lg text-neutral-200 leading-relaxed max-w-xl">
-              Hand-picked tours with real local experts. Flexible dates, fair
-              pricing, zero hidden fees.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/tours"
-                className="inline-flex items-center justify-center rounded-xl text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 bg-emerald-500 text-white hover:bg-emerald-600 h-12 px-6 shadow-lg shadow-emerald-500/20"
-              >
-                View Tours
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-xl text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white bg-white/10 text-white hover:bg-white/20 h-12 px-6 backdrop-blur border border-white/20"
-              >
-                Contact Us
-              </Link>
+    <>
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+        />
+      </Head>
+      <main>
+        {/* ===== HERO dengan lapisan gradient + grain ===== */}
+        <section className="relative min-h-[720px] flex items-center bg-neutral-950">
+          <div className="absolute inset-0">
+            <Image
+              src="https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg"
+              alt="Hero background - Beautiful mountain landscape with tourists"
+              fill
+              sizes="100vw"
+              priority
+              className="object-cover opacity-50"
+            />
+            {/* radial glow */}
+            <div className="absolute inset-0 [background:radial-gradient(60%_40%_at_20%_20%,rgba(16,185,129,0.28),transparent_60%)]" />
+            {/* grain (CSS only) */}
+            <div
+              className="absolute inset-0 opacity-[0.09] mix-blend-soft-light"
+              style={{
+                backgroundImage:
+                  "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%2280%22 height=%2280%22 filter=%22url(%23n)%22 opacity=%220.25%22/></svg>')",
+              }}
+            />
+          </div>
+          <div className="container mx-auto px-4 relative py-24">
+            <div className="max-w-2xl">
+              <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight tracking-tight">
+                Discover Your{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 to-emerald-500">
+                  Next Adventure
+                </span>
+              </h1>
+              <p className="mt-4 text-lg text-neutral-200 leading-relaxed max-w-xl">
+                Hand-picked tours with real local experts. Flexible dates, fair
+                pricing, zero hidden fees.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/tours"
+                  className="inline-flex items-center justify-center rounded-xl text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 bg-emerald-500 text-white hover:bg-emerald-600 h-12 px-6 shadow-lg shadow-emerald-500/20"
+                >
+                  View Tours
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center rounded-xl text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white bg-white/10 text-white hover:bg-white/20 h-12 px-6 backdrop-blur border border-white/20"
+                >
+                  Contact Us
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ===== Popular Destinations (dengan subtle grid bg) ===== */}
-      <section className="relative py-16 md:py-24 bg-neutral-50">
-        <div className="pointer-events-none absolute inset-0 [background:linear-gradient(to_right,rgba(0,0,0,.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,.04)_1px,transparent_1px)] [background-size:32px_32px]" />
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-wider uppercase text-emerald-700/90 bg-emerald-50 px-3 py-1 rounded-full">
-              ✦ Popular Destinations
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mt-4">
-              Find your dream getaway
-            </h2>
-            <p className="text-lg text-neutral-600 mt-3">
-              Explore our most popular destinations and start planning.
-            </p>
+        {/* ===== Popular Destinations (dengan subtle grid bg) ===== */}
+        <section className="relative py-16 md:py-24 bg-neutral-50">
+          <div className="pointer-events-none absolute inset-0 [background:linear-gradient(to_right,rgba(0,0,0,.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,.04)_1px,transparent_1px)] [background-size:32px_32px]" />
+          <div className="container mx-auto px-4 relative">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <span className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-wider uppercase text-emerald-700/90 bg-emerald-50 px-3 py-1 rounded-full">
+                ✦ Popular Destinations
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mt-4">
+                Find your dream getaway
+              </h2>
+              <p className="text-lg text-neutral-600 mt-3">
+                Explore our most popular destinations and start planning.
+              </p>
+            </div>
+            <FeaturedDestinationsCarousel destinations={featuredDestinations} />
           </div>
-          <FeaturedDestinationsCarousel destinations={featuredDestinations} />
-        </div>
-      </section>
+        </section>
 
-      {/* ===== Why Travel ===== */}
-      <section className="py-16 md:py-24 bg-neutral-900 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.pexels.com/photos/2325446/pexels-photo-2325446.jpeg"
-            alt="Travel background"
-            fill
-            sizes="100vw"
-            className="object-cover opacity-20"
-          />
-        </div>
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Why Travel with Us?
-            </h2>
-            <p className="text-lg text-neutral-300">
-              Passionate team. Authentic experiences. Unforgettable journeys.
-            </p>
-            <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-neutral-300">
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden>✅</span>No hidden fees
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden>🛡️</span>Secure payment
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden>📞</span>24/7 support
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden>↺</span>Free reschedule
-              </li>
-            </ul>
+        {/* ===== Why Travel ===== */}
+        <section className="py-16 md:py-24 bg-neutral-900 relative overflow-hidden">
+          <div className="absolute inset-0">
+            <Image
+              src="https://images.pexels.com/photos/2325446/pexels-photo-2325446.jpeg"
+              alt="Travel background"
+              fill
+              sizes="100vw"
+              className="object-cover opacity-20"
+            />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Expert Guides",
-                desc: "Local experts who know and love their destinations.",
-              },
-              {
-                title: "24/7 Support",
-                desc: "Round-the-clock assistance for peace of mind.",
-              },
-              {
-                title: "Best Value",
-                desc: "Competitive prices with zero hidden costs.",
-              },
-            ].map((b) => (
-              <div
-                key={b.title}
-                className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors"
-              >
-                <div
-                  className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4"
-                  aria-hidden
-                >
-                  ✓
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">{b.title}</h3>
-                <p className="text-neutral-300">{b.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== Travel Stories: carousel snap ===== */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-              Travel Stories
-            </h2>
-            <p className="text-lg text-neutral-600">
-              Real experiences from our happy travelers.
-            </p>
-          </div>
-
-          <div className="overflow-x-auto snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <div className="flex gap-6 min-w-max">
+          <div className="container mx-auto px-4 relative">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Why Travel with Us?
+              </h2>
+              <p className="text-lg text-neutral-300">
+                Passionate team. Authentic experiences. Unforgettable journeys.
+              </p>
+              <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-neutral-300">
+                <li className="inline-flex items-center gap-2">
+                  <span aria-hidden>✅</span>No hidden fees
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span aria-hidden>🛡️</span>Secure payment
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span aria-hidden>📞</span>24/7 support
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span aria-hidden>↺</span>Free reschedule
+                </li>
+              </ul>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  quote:
-                    "An incredible journey through Japan! The guides made every moment special.",
-                  name: "Sarah Mitchell",
-                  sub: "Japan Cultural Tour",
-                  img: "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg",
+                  title: "Expert Guides",
+                  desc: "Local experts who know and love their destinations.",
                 },
                 {
-                  quote:
-                    "From beaches to temples, everything was perfectly organized.",
-                  name: "Mark Johnson",
-                  sub: "Bali Adventure Package",
-                  img: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg",
+                  title: "24/7 Support",
+                  desc: "Round-the-clock assistance for peace of mind.",
                 },
                 {
-                  quote:
-                    "Our Mediterranean cruise was beyond expectations. Unforgettable!",
-                  name: "Lisa Anderson",
-                  sub: "Mediterranean Cruise",
-                  img: "https://images.pexels.com/photos/762020/pexels-photo-762020.jpeg",
+                  title: "Best Value",
+                  desc: "Competitive prices with zero hidden costs.",
                 },
-              ].map((t) => (
-                <figure
-                  key={t.name}
-                  className="snap-center w-[320px] shrink-0 bg-neutral-50 p-6 rounded-2xl border"
+              ].map((b) => (
+                <div
+                  key={b.title}
+                  className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors"
                 >
-                  <blockquote className="mb-6">
-                    <p className="text-neutral-700 italic">“{t.quote}”</p>
-                  </blockquote>
-                  <figcaption className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-neutral-200 overflow-hidden relative">
-                      <Image
-                        src={t.img}
-                        alt={t.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <div className="font-medium text-neutral-900">
-                        {t.name}
-                      </div>
-                      <div className="text-neutral-500 text-sm">{t.sub}</div>
-                    </div>
-                  </figcaption>
-                </figure>
+                  <div
+                    className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4"
+                    aria-hidden
+                  >
+                    ✓
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {b.title}
+                  </h3>
+                  <p className="text-neutral-300">{b.desc}</p>
+                </div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ===== Tours List (Light + Blurred Panel Header) ===== */}
-      <section className="relative py-16 md:py-24 bg-neutral-50">
-        {/* subtle ambient glow + grid */}
-        <div
-          className="pointer-events-none absolute inset-0
+        {/* ===== Travel Stories: carousel snap ===== */}
+        <section className="py-16 md:py-24 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+                Travel Stories
+              </h2>
+              <p className="text-lg text-neutral-600">
+                Real experiences from our happy travelers.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex gap-6 min-w-max">
+                {[
+                  {
+                    quote:
+                      "An incredible journey through Japan! The guides made every moment special.",
+                    name: "Sarah Mitchell",
+                    sub: "Japan Cultural Tour",
+                    img: "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg",
+                  },
+                  {
+                    quote:
+                      "From beaches to temples, everything was perfectly organized.",
+                    name: "Mark Johnson",
+                    sub: "Bali Adventure Package",
+                    img: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg",
+                  },
+                  {
+                    quote:
+                      "Our Mediterranean cruise was beyond expectations. Unforgettable!",
+                    name: "Lisa Anderson",
+                    sub: "Mediterranean Cruise",
+                    img: "https://images.pexels.com/photos/762020/pexels-photo-762020.jpeg",
+                  },
+                ].map((t) => (
+                  <figure
+                    key={t.name}
+                    className="snap-center w-[320px] shrink-0 bg-neutral-50 p-6 rounded-2xl border"
+                  >
+                    <blockquote className="mb-6">
+                      <p className="text-neutral-700 italic">“{t.quote}”</p>
+                    </blockquote>
+                    <figcaption className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-neutral-200 overflow-hidden relative">
+                        <Image
+                          src={t.img}
+                          alt={t.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <div className="font-medium text-neutral-900">
+                          {t.name}
+                        </div>
+                        <div className="text-neutral-500 text-sm">{t.sub}</div>
+                      </div>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== Tours List (Light + Blurred Panel Header) ===== */}
+        <section className="relative py-16 md:py-24 bg-neutral-50">
+          {/* subtle ambient glow + grid */}
+          <div
+            className="pointer-events-none absolute inset-0
     [background:radial-gradient(60%_40%_at_80%_0%,rgba(16,185,129,.08),transparent_55%)]
     [background-size:100%_100%]"
-        />
-        <div
-          className="pointer-events-none absolute inset-0
+          />
+          <div
+            className="pointer-events-none absolute inset-0
     [background:linear-gradient(to_right,rgba(0,0,0,.04)_1px,transparent_1px),
                  linear-gradient(to_bottom,rgba(0,0,0,.04)_1px,transparent_1px)]
     [background-size:32px_32px]"
-        />
+          />
 
-        <div className="container mx-auto px-4 relative">
-          {/* Header panel blur */}
-          <div className="mx-auto mb-12 max-w-3xl text-center rounded-2xl border border-black/5 bg-white/60 backdrop-blur px-6 py-8 shadow-sm">
-            <span className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-wider uppercase text-emerald-700/90 bg-emerald-50 px-3 py-1 rounded-full ring-1 ring-emerald-600/10">
-              ✦ Popular Tours
-            </span>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-neutral-900">
-              Plan your perfect escape
-            </h2>
-            <p className="mt-3 text-neutral-600 text-lg">
-              Curated itineraries, flexible dates, real local guides.
-            </p>
-            {/* trust row */}
-            <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-neutral-600">
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden>✅</span>No hidden fees
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden>🛡️</span>Secure payment
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden>📞</span>24/7 support
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden>↺</span>Free reschedule
-              </li>
-            </ul>
-          </div>
-
-          {/* Search / Sort */}
-          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search tours (e.g. Japan, beach, 7D)"
-              className="h-11 w-full md:w-[380px] rounded-md border border-neutral-200 bg-white px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-neutral-600">Sort by:</span>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortOption)}
-                className="h-10 rounded-md border border-neutral-200 bg-white px-3 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="popular">Most Popular</option>
-                <option value="priceAsc">Price (Low → High)</option>
-                <option value="priceDesc">Price (High → Low)</option>
-                <option value="duration">Duration</option>
-              </select>
+          <div className="container mx-auto px-4 relative">
+            {/* Header panel blur */}
+            <div className="mx-auto mb-12 max-w-3xl text-center rounded-2xl border border-black/5 bg-white/60 backdrop-blur px-6 py-8 shadow-sm">
+              <span className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-wider uppercase text-emerald-700/90 bg-emerald-50 px-3 py-1 rounded-full ring-1 ring-emerald-600/10">
+                ✦ Popular Tours
+              </span>
+              <h2 className="mt-4 text-3xl md:text-4xl font-bold text-neutral-900">
+                Plan your perfect escape
+              </h2>
+              <p className="mt-3 text-neutral-600 text-lg">
+                Curated itineraries, flexible dates, real local guides.
+              </p>
+              {/* trust row */}
+              <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-neutral-600">
+                <li className="inline-flex items-center gap-2">
+                  <span aria-hidden>✅</span>No hidden fees
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span aria-hidden>🛡️</span>Secure payment
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span aria-hidden>📞</span>24/7 support
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span aria-hidden>↺</span>Free reschedule
+                </li>
+              </ul>
             </div>
-          </div>
 
-          {/* Filter pills */}
-          <div className="mb-6 flex flex-wrap justify-center gap-2">
-            {allCats.map((c) => (
-              <button
-                key={c}
-                onClick={() => setCat(c)}
-                className={`h-10 px-4 rounded-full border transition ${
-                  cat === c
-                    ? "bg-emerald-600 text-white border-emerald-600"
-                    : "bg-white hover:bg-neutral-50 text-neutral-900 border-neutral-200"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+            {/* Search / Sort */}
+            <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search tours (e.g. Japan, beach, 7D)"
+                className="h-11 w-full md:w-[380px] rounded-md border border-neutral-200 bg-white px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-neutral-600">Sort by:</span>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortOption)}
+                  className="h-10 rounded-md border border-neutral-200 bg-white px-3 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="popular">Most Popular</option>
+                  <option value="priceAsc">Price (Low → High)</option>
+                  <option value="priceDesc">Price (High → Low)</option>
+                  <option value="duration">Duration</option>
+                </select>
+              </div>
+            </div>
 
-          {/* Grid */}
-          {filtered.length === 0 ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <TourSkeleton key={i} />
+            {/* Filter pills */}
+            <div className="mb-6 flex flex-wrap justify-center gap-2">
+              {allCats.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCat(c)}
+                  className={`h-10 px-4 rounded-full border transition ${
+                    cat === c
+                      ? "bg-emerald-600 text-white border-emerald-600"
+                      : "bg-white hover:bg-neutral-50 text-neutral-900 border-neutral-200"
+                  }`}
+                >
+                  {c}
+                </button>
               ))}
             </div>
-          ) : (
-            <>
-              {/* JSON-LD tetap pakai list lengkap untuk SEO */}
-              <ToursJsonLD items={filtered} />
+
+            {/* Grid */}
+            {filtered.length === 0 ? (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {visibleTours.map((tour) => (
-                  <TourCardEnhanced key={tour.id} tour={tour} />
+                {Array.from({ length: 8 }).map((_, i) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <TourSkeleton key={i} />
                 ))}
               </div>
+            ) : (
+              <>
+                {/* JSON-LD tetap pakai list lengkap untuk SEO */}
+                <ToursJsonLD items={filtered} />
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {visibleTours.map((tour) => (
+                    <TourCardEnhanced key={tour.id} tour={tour} />
+                  ))}
+                </div>
 
-              {/* Hint kecil kalau ada lebih banyak hasil */}
-              {filtered.length > visibleTours.length && (
-                <p className="mt-6 text-center text-sm text-neutral-500">
-                  Showing {visibleTours.length} of {filtered.length} results
-                </p>
-              )}
-            </>
-          )}
+                {/* Hint kecil kalau ada lebih banyak hasil */}
+                {filtered.length > visibleTours.length && (
+                  <p className="mt-6 text-center text-sm text-neutral-500">
+                    Showing {visibleTours.length} of {filtered.length} results
+                  </p>
+                )}
+              </>
+            )}
 
-          <div className="mt-10 text-center">
-            <Link
-              href="/tours"
-              className="inline-flex h-12 items-center justify-center rounded-md bg-neutral-900 px-6 text-base font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            <div className="mt-10 text-center">
+              <Link
+                href="/tours"
+                className="inline-flex h-12 items-center justify-center rounded-md bg-neutral-900 px-6 text-base font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+              >
+                Browse All Tours
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== Newsletter ===== */}
+        <section className="py-16 md:py-24 bg-emerald-600">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8"
             >
-              Browse All Tours
+              <div className="flex-1">
+                <motion.h2
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="text-3xl font-bold text-white mb-4"
+                >
+                  Get Travel Inspiration
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="text-emerald-50 text-lg"
+                >
+                  Subscribe and receive exclusive offers, tips, and destination
+                  updates.
+                </motion.p>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <NewsletterInline />
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ===== CTA Section ===== */}
+        <section className="py-16 md:py-24 bg-emerald-50">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-3xl mx-auto"
+            >
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6"
+              >
+                Ready to Start Your Journey?
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-lg text-neutral-600 mb-8"
+              >
+                Talk to our travel experts and let us plan your perfect
+                vacation.
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 bg-emerald-600 text-white hover:bg-emerald-700 h-12 px-8 shadow-lg"
+                >
+                  Plan Your Trip
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ===== Floating CTA (mobile) ===== */}
+        <div className="fixed inset-x-4 bottom-4 z-40 md:hidden">
+          <div className="rounded-xl bg-neutral-900 text-white px-4 py-3 shadow-2xl flex items-center justify-between">
+            <div className="text-sm">
+              <div className="font-semibold">Need help planning?</div>
+              <div className="text-white/80">Talk to our trip expert</div>
+            </div>
+            <Link
+              href="/contact"
+              className="h-10 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 flex items-center"
+            >
+              Chat Now
             </Link>
           </div>
         </div>
-      </section>
-
-      {/* ===== Newsletter ===== */}
-      <section className="py-16 md:py-24 bg-emerald-600">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8"
-          >
-            <div className="flex-1">
-              <motion.h2
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-3xl font-bold text-white mb-4"
-              >
-                Get Travel Inspiration
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-emerald-50 text-lg"
-              >
-                Subscribe and receive exclusive offers, tips, and destination
-                updates.
-              </motion.p>
-            </div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <NewsletterInline />
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===== CTA Section ===== */}
-      <section className="py-16 md:py-24 bg-emerald-50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6"
-            >
-              Ready to Start Your Journey?
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-lg text-neutral-600 mb-8"
-            >
-              Talk to our travel experts and let us plan your perfect vacation.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 bg-emerald-600 text-white hover:bg-emerald-700 h-12 px-8 shadow-lg"
-              >
-                Plan Your Trip
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===== Floating CTA (mobile) ===== */}
-      <div className="fixed inset-x-4 bottom-4 z-40 md:hidden">
-        <div className="rounded-xl bg-neutral-900 text-white px-4 py-3 shadow-2xl flex items-center justify-between">
-          <div className="text-sm">
-            <div className="font-semibold">Need help planning?</div>
-            <div className="text-white/80">Talk to our trip expert</div>
-          </div>
-          <Link
-            href="/contact"
-            className="h-10 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 flex items-center"
-          >
-            Chat Now
-          </Link>
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
 
